@@ -5,6 +5,7 @@ from flask import redirect, url_for
 from flask_login import login_user, login_required, logout_user, current_user
 from flask_login import LoginManager 
 import logging
+import sqlalchemy   # for handling database exceptions
 
 auth = Blueprint('auth', __name__)
 
@@ -56,9 +57,13 @@ def sign_up():
                 new_user = User(email=email, firstname=firstname, password=generate_password_hash(password1, method='pbkdf2:sha256'))
                 db.session.add(new_user)
                 db.session.commit()  # save the new user to the database
-                login_user(new_user, remember=True)  # login the new user
+                login_user(new_user, remember=True)
                 flash("Account created!", category='success')
                 return redirect(url_for('views.home'))
+            except sqlalchemy.exc.IntegrityError as e:
+                db.session.rollback()
+                flash("Email already exists.", category='error')
+                logging.error(f"IntegrityError: {e}")
             except Exception as e:
                 db.session.rollback()
                 flash("An error occurred while creating the account.", category='error')
