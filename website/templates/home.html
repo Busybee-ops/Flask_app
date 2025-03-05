@@ -1,8 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 align="left">Notes</h1>
-<h2 align="left">Welcome {{ user.username }}</h2>
+<br/>
+  <h4 class="text-primary" align="left">
+    Welcome {{ user.firstname }}
+    <small class="text-muted"> 
+     You are logged in as {{ user.email }}.  
+    </small>
+  </h4>
+<br/>
+<h4 align="left" class="text-info">Notes</h4>
 <ul class="list-group list-group-flush" id="notes">
   {% for note in user.notes %}
   <li class="list-group-item d-flex justify-content-between align-items-center">
